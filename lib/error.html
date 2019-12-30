@@ -1,0 +1,20 @@
+<div style='position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 100000; padding: 10px 20px; background-color: white; color: #333; font-family: sans-serif'>
+
+	<div style='color:#cc0000;font-size:1.5em;margin-bottom:10px'>Build Error</div>
+	<div style='padding:4px 8px;background-color:#fef3f2'>
+		<b style='color:#cc0000'>${summary}</b>
+		<div id='--devserver-error-frame' style='margin:1em 0;white-space: pre;font-size:13px;font-family:Consolas,Menlo,DejaVu Sans Mono,monospace'>${frame}</div>
+	</div>
+	<div style='margin-top: 2em; padding: 4px 8px; background-color: #f7f7f9'>
+		<b>Stack Trace:</b>
+		<div style='margin:1em 0;white-space: pre;font-size:13px;font-family:Consolas,Menlo,DejaVu Sans Mono,monospace'>${stack}</div>
+	</div>
+</div>
+<script>
+	window.addEventListener('DOMContentLoaded', function() {
+		var div = document.getElementById('--devserver-error-frame');
+		div.innerHTML = div.textContent.replace(/^\s*(\^)\s*$/m, function(m, p) {
+			return m.replace('^', '<b style="color:#cc0000">^</b>')
+		});
+	})
+</script>

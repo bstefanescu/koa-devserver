@@ -1,0 +1,44 @@
+{
+  "name": "koa-devserver",
+  "version": "0.9.0",
+  "description": "A development server based on Koa",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bstefanescu/koa-devserver.git"
+  },
+  "keywords": [
+    "koa",
+    "development",
+    "dev",
+    "server",
+    "live",
+    "reload",
+    "browser"
+  ],
+  "author": "Bogdan Setfanescu <bogdan@quandora.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bstefanescu/koa-devserver/issues"
+  },
+  "homepage": "https://github.com/bstefanescu/koa-devserver#readme",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-send": "^5.0.0",
+    "livereload": "^0.8.2",
+    "opener": "^1.5.1"
+  },
+  "devDependencies": {
+    "rollup": "^1.27.14",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}

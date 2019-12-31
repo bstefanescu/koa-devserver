@@ -1,7 +1,7 @@
 {
   "name": "koa-devserver",
   "version": "0.9.0",
-  "description": "A development server based on Koa",
+  "description": "A development server based on Koa HTTP framework",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",
   "directories": {

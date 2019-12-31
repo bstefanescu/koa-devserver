@@ -1,12 +1,12 @@
 {
   "name": "koa-devserver",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A development server based on Koa HTTP framework",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"

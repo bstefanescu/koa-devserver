@@ -63,7 +63,7 @@ function getProp(obj, key) {
 function expandVars(text, vars) {
     return text.replace(/\$\{([$A-Za-z_]+[$A-Za-z_0-9.]*)\}/g, function(m, p1) {
         const val = getProp(vars, p1);
-        return val === undefined ? m : val;
+        return val === undefined ? '' : val;
     });
 }
 
@@ -79,10 +79,23 @@ function livereloadSrc(opts) {
     return protocol+'://'+hostname+':'+port+'/livereload.js?snipver=1';
 }
 
+function createError(error) {
+    const result = Object.assign({}, error);
+    result.file = error.file || error.id;
+    result.line = error.line || (error.log && error.loc.line);
+    result.column = error.column || (error.log && error.loc.column);
+    if (result.file) {
+        result.location = result.file + ' ('+result.line+':'+result.column+')';
+    } else {
+        result.location = 'unknown';
+    }
+    return result;
+}
+
 function livereload(opts) {
     opts = opts || {};
     const livereloadSnippet = "\n<script type='application/javascript' src='"+livereloadSrc(opts)+"'></script>\n";
-    const errorProvider = opts.error;
+    const errorProvider = opts.errorProvider;
     const errorSnippet = errorProvider ? loadErrorSnippet(opts.errorFile) : null;
 
     return async function livereload(ctx, next) {
@@ -91,8 +104,10 @@ function livereload(opts) {
         if (ctx.response.type && !ctx.response.type.includes('html')) return;
 
         let snippet = livereloadSnippet;
-        if (errorProvider.error) {
-            snippet = expandVars(errorSnippet, errorProvider.error)+snippet;
+        if (errorProvider && errorProvider.error) {
+            const error = createError(errorProvider.error);
+            //console.log('+++++++++++++++++++++++++++\n', error, '\n+++++++++++++++++++++++++');
+            snippet = expandVars(errorSnippet, error)+snippet;
         }
 
         injectSnippet(ctx, snippet);

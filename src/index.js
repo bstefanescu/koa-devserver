@@ -67,7 +67,7 @@ function DevServer(opts) {
 	const app = new Koa();
 
 	if (this.livereload) {
-		const _opts = { host: this.host, protocol: this.protocol, error: this };
+		const _opts = { host: this.host, protocol: this.protocol, errorProvider: this };
 		const src = this.livereload.src;
 		const port = this.livereload.port;
 		const errorPage = this.livereload.errorPage;
@@ -179,4 +179,3 @@ DevServer.prototype = {
 
 
 export default DevServer;
-

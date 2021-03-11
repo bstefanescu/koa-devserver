@@ -92,7 +92,7 @@ function createError(error) {
         if (!result.line || !result.column) {
             result.location = result.file;
         } else {
-            result.location = result.file + ' ('+result.line||'0'+':'+result.column||'0'+')';
+            result.location = result.file + ' ('+(result.line||'0')+':'+(result.column||'0')+')';
         }
     } else {
         result.location = 'unknown';

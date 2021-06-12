@@ -114,7 +114,6 @@ function livereload(opts) {
         let snippet = livereloadSnippet;
         if (errorProvider && errorProvider.error) {
             const error = createError(errorProvider.error);
-            //console.log('+++++++++++++++++++++++++++\n', error, '\n+++++++++++++++++++++++++');
             snippet = expandVars(errorSnippet, error)+snippet;
         }
 

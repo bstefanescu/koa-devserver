@@ -71,7 +71,6 @@ function createLiveReloadOptions(opts) {
 }
 
 function DevServer(opts) {
-	console.log('==============', opts)
 	opts = Object.assign({
 		name: 'Koa DevServer',
 		host: '127.0.0.1',
@@ -107,7 +106,6 @@ function DevServer(opts) {
 		if (errorPage) _opts.errorPage = errorPage;
 		livereloadMiddleware = livereloadInjector(_opts);
 	}
-console.log('++++++++++++++++koa', opts.koa)
 	const app = (opts.koa || createKoaApp)(livereloadMiddleware, opts);
 	const webServer = opts.https
 		? https.createServer(opts.https, app.callback())

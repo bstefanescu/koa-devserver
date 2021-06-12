@@ -45,12 +45,13 @@ Here is a list of all available options:
 ```javascript
 {
 	name: 'Koa DevServer',
-	root: '.', // the web root - or ["path/to/root1", "path/to/root2"] for multiple web roots
+	root: '.', // the web root
 	host: '127.0.0.1', // the host to listen to
 	port: 8080, // the port to listen to
 	open: '/path_to_open_in_browser/when/server/starts.html',
 	index: 'index.html', // use an index file when GET directory -> passed to koa-send
 	verbose: false, // if true print HTTP requests
+	koa: function, // if set will be used to create a custom koa app (you need to setup yourself all the required middlewares). The function signature is koa(livereloadMiddleware, opts) where livereloadMiddleware can be null if liverealof is not enabled.
 	https: { // defaults to undefined
 
 	}

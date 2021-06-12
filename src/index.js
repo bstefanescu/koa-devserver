@@ -14,6 +14,25 @@ function green(text) {
   return '\u001b[1m\u001b[32m' + text + '\u001b[39m\u001b[22m';
 }
 
+function createKoaApp(livereloadMiddleware, opts) {
+	const app = new Koa();
+
+	if (livereloadMiddleware) {
+		app.use(livereloadMiddleware);
+	}
+
+	if (Array.isArray(opts.use)) {
+		opts.use.forEach(fn => app.use(fn));
+	} else if (opts.use) { // check if function?
+		app.use(opts.use);
+	}
+
+	// add serveFile middleware at the end
+	app.use(serve([opts.root], opts.index, opts.verbose));
+
+	return app;
+}
+
 /**
  * Serve a file from multiple roots. Return the first matching file.
  */
@@ -52,21 +71,33 @@ function createLiveReloadOptions(opts) {
 }
 
 function DevServer(opts) {
-	this.name = opts.name || 'Koa DevServer';
-	let roots = opts.root || process.cwd();
-	this.host = opts.host || '127.0.0.1';
-	this.port = opts.port || 8080;
-	this.protocol = opts.https ? 'https' : 'http';
-	this.url = this.protocol + '://' + this.host + ':' + this.port;
-	this.openUrl = opts.open ? (opts.open === true ? '/' : opts.open) : null;
-	this.verbose = !!opts.verbose;
-	this.index = opts.index || 'index.html';
+	console.log('==============', opts)
+	opts = Object.assign({
+		name: 'Koa DevServer',
+		host: '127.0.0.1',
+		port: 8080,
+		https: false,
+		verbose: false,
+		index: 'index.html',
+		root: process.cwd()
+	}, opts || {});
+
+	opts.root = fspath.resolve(opts.root);
+
+	this.opts = opts;
+
 	this.error = null;
+
+	this.protocol = opts.https ? 'https' : 'http';
+	this.url = this.protocol + '://' + opts.host + ':' + opts.port;
+	this.openUrl = opts.open ? (opts.open === true ? '/' : opts.open) : null;
+	this.host = opts.host;
+	this.port = parseInt(opts.port);
+
 	this.livereload = createLiveReloadOptions(opts.livereload);
 
-	const app = new Koa();
-
-	if (this.livereload) {
+	let livereloadMiddleware = null;
+	if (livereload) {
 		const _opts = { host: this.host, protocol: this.protocol, errorProvider: this };
 		const src = this.livereload.src;
 		const port = this.livereload.port;
@@ -74,35 +105,23 @@ function DevServer(opts) {
 		if (src) _opts.src = src;
 		if (port) _opts.port = port;
 		if (errorPage) _opts.errorPage = errorPage;
-		app.use(livereloadInjector(_opts));
+		livereloadMiddleware = livereloadInjector(_opts);
 	}
-
-	if (Array.isArray(opts.use)) {
-		opts.use.forEach(fn => app.use(fn));
-	} else if (opts.use) { // check if function?
-		app.use(opts.use);
-	}
-
-	// add serveFile middleware at the end
-	if (!Array.isArray(roots)) {
-		roots = [roots];
-	}
-	roots = roots.map(root => fspath.resolve(root) );
-	this.roots = roots;
-	app.use(serve(this.roots, this.index, this.verbose));
-
-	const webServer = opts.https ? https.createServer(opts.https, app.callback()) : http.createServer(app.callback());
+console.log('++++++++++++++++koa', opts.koa)
+	const app = (opts.koa || createKoaApp)(livereloadMiddleware, opts);
+	const webServer = opts.https
+		? https.createServer(opts.https, app.callback())
+		: http.createServer(app.callback());
 
 	this.webServer = webServer;
 	this.app = app;
-
 }
 
 DevServer.prototype = {
 	banner() {
 		const banner = "-----------------------------------------------------------------------------------------------------\n"
-		+`  ${green(this.name)}\n`
-		+`  Serving ${green(this.url)} -> ${this.roots}\n`
+		+`  ${green(this.opts.name)}\n`
+		+`  Serving ${green(this.url)} -> ${this.opts.root}\n`
 		+`  Live Reload: ${green(this.livereload?'ON':'OFF')}\n`
 		+"-----------------------------------------------------------------------------------------------------";
 		return banner;
@@ -126,7 +145,7 @@ DevServer.prototype = {
 			}
 			this.liveServer = livereload.createServer(opts);
 			if (opts.watch) {
-				this.liveServer.watch(opts.watch || this.roots);
+				this.liveServer.watch(opts.watch || [this.opts.root]);
 			}
 		}
 		this.webServer.listen(this.port, this.host);

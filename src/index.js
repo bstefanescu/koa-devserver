@@ -96,7 +96,7 @@ function DevServer(opts) {
 	this.livereload = createLiveReloadOptions(opts.livereload);
 
 	let livereloadMiddleware = null;
-	if (livereload) {
+	if (this.livereload) {
 		const _opts = { host: this.host, protocol: this.protocol, errorProvider: this };
 		const src = this.livereload.src;
 		const port = this.livereload.port;
